@@ -113,9 +113,11 @@ public class CasinoController {
 
         List<GameRoundTransaction> transactions = transactionService.getTransactionsByPlayerId(playerId);
 
-        transactions.sort((o1, o2)
-                -> o2.getCreateDate().compareTo(
-                o1.getCreateDate()));
+        //swapped comparison to compare transaction2 create date to transaction1 date so that
+        //we get the latest transactions at the top of our list
+        transactions.sort((transaction1, transaction2)
+                -> transaction2.getCreateDate().compareTo(
+                transaction1.getCreateDate()));
         int transactionNumberLimit = transactions.size() >= 10 ? 10 : transactions.size();
         List<GameRoundTransaction> responseTransactions = transactions.subList(0, transactionNumberLimit);
 
