@@ -22,6 +22,7 @@ public class CasinoController {
 
     private static final String TRANSACTION_TYPE_WAGER = "wager";
     private static final String TRANSACTION_TYPE_WINNINGS = "winnings";
+    private static final String PASSWORD_ANSWER = "swordfish";
     private final PlayerService playerService;
     private final TransactionService transactionService;
 
@@ -105,7 +106,7 @@ public class CasinoController {
     @ResponseBody
     public List<GameRoundTransactionDTO> latestTransactions(@RequestParam UUID playerId, @RequestParam String password) {
 
-        if(!password.equals("swordfish")) {
+        if(!password.equals(PASSWORD_ANSWER)) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST);
         }
