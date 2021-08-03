@@ -21,8 +21,8 @@ public class PlayerService {
         this.playerRepository = playerRepository;
     }
 
-    public Player createPlayer(String firstname, String lastname, String email, Double currentBalance) {
-        return playerRepository.save(new Player(firstname, lastname, email, currentBalance));
+    public Player createPlayer(String firstname, String lastname, String username, String email, Double currentBalance) {
+        return playerRepository.save(new Player(firstname, lastname, username, email, currentBalance));
     }
 
     public Player updatePlayer(Player player) {
@@ -36,5 +36,9 @@ public class PlayerService {
 
     public Player getByPlayerId(UUID playerId) {
         return playerRepository.findByPlayerId(playerId);
+    }
+
+    public Player getByUsername(String username) {
+        return playerRepository.findByUsername(username);
     }
 }

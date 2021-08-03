@@ -1,8 +1,8 @@
 package com.online.casino.controller;
 
-import com.online.casino.dto.GameRoundTransactionDTO;
+import com.online.casino.dto.GameEventTransactionDTO;
 import com.online.casino.dto.PlayerDTO;
-import com.online.casino.model.GameRoundTransaction;
+import com.online.casino.model.GameEventTransaction;
 import com.online.casino.model.Player;
 import com.online.casino.service.PlayerService;
 import com.online.casino.service.TransactionService;
@@ -20,9 +20,8 @@ import static com.online.casino.dto.PlayerDTO.toPlayerDTO;
 @RestController
 public class CasinoController {
 
-    private static final String TRANSACTION_TYPE_WAGER = "wager";
-    private static final String TRANSACTION_TYPE_WINNINGS = "winnings";
     private static final String PASSWORD_ANSWER = "swordfish";
+    private static final int TRANSACTIONS_LIST_LIMIT = 10;
     private final PlayerService playerService;
     private final TransactionService transactionService;
 
@@ -39,8 +38,9 @@ public class CasinoController {
 
     @PostMapping("/createplayer")
     @ResponseBody
-    public PlayerDTO createPlayer(@RequestParam("firstname") String firstName, @RequestParam("lastname") String lastName, @RequestParam("email") String email) {
-            return toPlayerDTO(playerService.createPlayer(firstName, lastName, email, 0.0));
+    public PlayerDTO createPlayer(@RequestParam("firstname") String firstName, @RequestParam("lastname") String lastName,
+                                  @RequestParam("username") String username, @RequestParam("email") String email) {
+            return toPlayerDTO(playerService.createPlayer(firstName, lastName, username, email, 0.0));
     }
 
     @GetMapping("/getallplayers")
@@ -57,19 +57,17 @@ public class CasinoController {
     public PlayerDTO getPlayer (@RequestParam UUID playerId) {
         Player player = playerService.getByPlayerId(playerId);
 
-        if(player == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-        }
+        checkPlayerExists(player);
 
         return toPlayerDTO(playerService.getByPlayerId(playerId));
     }
 
     @GetMapping("/getalltransactions")
     @ResponseBody
-    public List<GameRoundTransactionDTO> getAllTransactions() {
+    public List<GameEventTransactionDTO> getAllTransactions() {
         return transactionService.getAllTransactions()
                 .stream()
-                .map(GameRoundTransactionDTO::toGameRoundTransactionDTO)
+                .map(GameEventTransactionDTO::toGameRoundTransactionDTO)
                 .collect(Collectors.toList());
     }
 
@@ -83,13 +81,15 @@ public class CasinoController {
     public PlayerDTO deductWager(@RequestParam UUID playerId,  @RequestParam Double wagerAmount) {
         Player player = playerService.getByPlayerId(playerId);
 
+        checkPlayerExists(player);
+
         if(player.getCurrentBalance() <= 0.0 && wagerAmount > 0.0) {
             throw new ResponseStatusException(
                     HttpStatus.I_AM_A_TEAPOT);
         }
 
         player.wager(wagerAmount);
-        transactionService.createTransaction(playerId, TRANSACTION_TYPE_WAGER, wagerAmount);
+        transactionService.createTransaction(playerId, GameEventTransaction.WAGER_TRANSACTION_TYPE, wagerAmount);
 
         return toPlayerDTO(playerService.updatePlayer(player));
     }
@@ -97,33 +97,49 @@ public class CasinoController {
     @PostMapping("/addwinnings")
     public PlayerDTO addWinnings(@RequestParam UUID playerId, @RequestParam Double winningsAmount) {
         Player player = playerService.getByPlayerId(playerId);
+
+        checkPlayerExists(player);
+
         player.addWinnings(winningsAmount);
-        transactionService.createTransaction(playerId, TRANSACTION_TYPE_WINNINGS, winningsAmount);
+        transactionService.createTransaction(playerId, GameEventTransaction.WINNINGS_TRANSACTION_TYPE, winningsAmount);
         return toPlayerDTO(playerService.updatePlayer(player));
     }
 
     @GetMapping("/latesttransactions")
     @ResponseBody
-    public List<GameRoundTransactionDTO> latestTransactions(@RequestParam UUID playerId, @RequestParam String password) {
+    public List<GameEventTransactionDTO> latestTransactions(@RequestParam String username, @RequestParam String password) {
 
         if(!password.equals(PASSWORD_ANSWER)) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST);
         }
 
-        List<GameRoundTransaction> transactions = transactionService.getTransactionsByPlayerId(playerId);
+        Player player = playerService.getByUsername(username);
 
-        //swapped comparison to compare transaction2 create date to transaction1 date so that
+        checkPlayerExists(player);
+
+        List<GameEventTransaction> transactions = transactionService.getTransactionsByPlayerId(player.getPlayerId());
+
+        //swapped the comparison around to compare transaction2 create date to transaction1 date so that
         //we get the latest transactions at the top of our list
         transactions.sort((transaction1, transaction2)
                 -> transaction2.getCreateDate().compareTo(
                 transaction1.getCreateDate()));
-        int transactionNumberLimit = transactions.size() >= 10 ? 10 : transactions.size();
-        List<GameRoundTransaction> responseTransactions = transactions.subList(0, transactionNumberLimit);
+
+        //check the size of the transaction list passed in, if the list's size is less than the TRANSACTIONS_LIST_LIMIT
+        //adjust transaction sublist size to be the size of the list passed in. This handles an ArrayIndexOutOfBounds runtime exception
+        int transactionsAmountLimit = transactions.size() >= TRANSACTIONS_LIST_LIMIT ? TRANSACTIONS_LIST_LIMIT : transactions.size();
+        List<GameEventTransaction> responseTransactions = transactions.subList(0, transactionsAmountLimit);
 
         return responseTransactions
                 .stream()
-                .map(GameRoundTransactionDTO::toGameRoundTransactionDTO)
+                .map(GameEventTransactionDTO::toGameRoundTransactionDTO)
                 .collect(Collectors.toList());
+    }
+
+    private void checkPlayerExists(Player player) {
+        if(player == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
     }
 }

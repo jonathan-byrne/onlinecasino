@@ -15,6 +15,7 @@ public class Player {
 
     private String firstname;
     private String lastname;
+    private String username;
     private String email;
     private Double currentBalance;
 
@@ -22,9 +23,10 @@ public class Player {
 
     }
 
-    public Player(String firstname, String lastname, String email, Double currentBalance) {
+    public Player(String firstname, String lastname, String username, String email, Double currentBalance) {
         this.firstname = firstname;
         this.lastname = lastname;
+        this.username = username;
         this.email = email;
         this.currentBalance = currentBalance;
     }
@@ -40,6 +42,8 @@ public class Player {
     public String getLastname() {
         return lastname;
     }
+
+    public String getUsername() {  return username; }
 
     public String getEmail() {
         return email;

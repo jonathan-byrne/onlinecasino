@@ -8,4 +8,6 @@ import java.util.UUID;
 public interface PlayerRepository extends CrudRepository<Player,Long> {
 
     Player findByPlayerId(UUID playerId);
+
+    Player findByUsername(String username);
 }

@@ -1,11 +1,9 @@
 package com.online.casino.service;
 
-import com.online.casino.model.GameRoundTransaction;
-import com.online.casino.model.Player;
+import com.online.casino.model.GameEventTransaction;
 import com.online.casino.repository.TransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 import java.util.UUID;
@@ -22,16 +20,16 @@ public class TransactionService {
         this.transactionRepository = transactionRepository;
     }
 
-    public GameRoundTransaction createTransaction(UUID playerId, String transactionType, Double transactionAmount) {
-        return transactionRepository.save(new GameRoundTransaction(playerId, transactionType,transactionAmount));
+    public GameEventTransaction createTransaction(UUID playerId, String transactionType, Double transactionAmount) {
+        return transactionRepository.save(new GameEventTransaction(playerId, transactionType,transactionAmount));
     }
 
-    public List<GameRoundTransaction> getAllTransactions() {
+    public List<GameEventTransaction> getAllTransactions() {
         return StreamSupport.stream(transactionRepository.findAll().spliterator(), false)
                 .collect(Collectors.toList());
     }
 
-    public List<GameRoundTransaction> getTransactionsByPlayerId(UUID playerId) {
+    public List<GameEventTransaction> getTransactionsByPlayerId(UUID playerId) {
         return StreamSupport.stream(transactionRepository.findByPlayerId(playerId).spliterator(), false)
                 .collect(Collectors.toList());
     }

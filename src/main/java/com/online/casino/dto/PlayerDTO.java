@@ -9,13 +9,15 @@ public class PlayerDTO {
     UUID playerId;
     String firstName;
     String lastName;
+    String username;
     String email;
     Double currentBalance;
 
-    public PlayerDTO(UUID playerId, String firstName, String lastName, String email, Double currentBalance) {
+    public PlayerDTO(UUID playerId, String firstName, String lastName, String username, String email, Double currentBalance) {
         this.playerId = playerId;
         this.firstName = firstName;
         this.lastName = lastName;
+        this.username = username;
         this.email = email;
         this.currentBalance = currentBalance;
     }
@@ -32,6 +34,8 @@ public class PlayerDTO {
         return lastName;
     }
 
+    public String getUsername() { return username; }
+
     public String getEmail() {
         return email;
     }
@@ -41,6 +45,6 @@ public class PlayerDTO {
     }
 
     public static PlayerDTO toPlayerDTO(Player player) {
-        return new PlayerDTO(player.getPlayerId(), player.getFirstname(), player.getLastname(), player.getEmail(), player.getCurrentBalance());
+        return new PlayerDTO(player.getPlayerId(), player.getFirstname(), player.getLastname(), player.getUsername(), player.getEmail(), player.getCurrentBalance());
     }
 }

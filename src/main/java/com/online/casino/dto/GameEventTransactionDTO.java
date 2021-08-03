@@ -1,11 +1,11 @@
 package com.online.casino.dto;
 
-import com.online.casino.model.GameRoundTransaction;
+import com.online.casino.model.GameEventTransaction;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-public class GameRoundTransactionDTO {
+public class GameEventTransactionDTO {
 
     private UUID transactionId;
     private UUID playerId;
@@ -13,7 +13,7 @@ public class GameRoundTransactionDTO {
     private Double transactionAmount;
     private LocalDateTime createDate;
 
-    public GameRoundTransactionDTO(UUID transactionId, UUID playerId, String transactionType, Double transactionAmount, LocalDateTime createDate){
+    public GameEventTransactionDTO(UUID transactionId, UUID playerId, String transactionType, Double transactionAmount, LocalDateTime createDate){
         this.transactionId = transactionId;
         this.playerId = playerId;
         this.transactionType = transactionType;
@@ -41,8 +41,8 @@ public class GameRoundTransactionDTO {
         return createDate;
     }
 
-    public static GameRoundTransactionDTO toGameRoundTransactionDTO(GameRoundTransaction gameRoundTransaction) {
-        return new GameRoundTransactionDTO(gameRoundTransaction.getTransactionId(), gameRoundTransaction.getPlayerId(),
-                gameRoundTransaction.getTransactionType(), gameRoundTransaction.getTransactionAmount(), gameRoundTransaction.getCreateDate());
+    public static GameEventTransactionDTO toGameRoundTransactionDTO(GameEventTransaction gameEventTransaction) {
+        return new GameEventTransactionDTO(gameEventTransaction.getTransactionId(), gameEventTransaction.getPlayerId(),
+                gameEventTransaction.getTransactionType(), gameEventTransaction.getTransactionAmount(), gameEventTransaction.getCreateDate());
     }
 }
