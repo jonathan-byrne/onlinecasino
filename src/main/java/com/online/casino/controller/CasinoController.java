@@ -6,6 +6,7 @@ import com.online.casino.model.GameEventTransaction;
 import com.online.casino.model.Player;
 import com.online.casino.service.PlayerService;
 import com.online.casino.service.TransactionService;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -24,8 +25,7 @@ public class CasinoController {
     private static final int TRANSACTIONS_LIST_LIMIT = 10;
     private final PlayerService playerService;
     private final TransactionService transactionService;
-//    private static Logger logger = LoggerFactory.getLogger(SLF4JExample.class);
-    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(CasinoController.class);
+    private static final Logger log = org.slf4j.LoggerFactory.getLogger(CasinoController.class);
 
 
     @Autowired
