@@ -24,6 +24,9 @@ public class CasinoController {
     private static final int TRANSACTIONS_LIST_LIMIT = 10;
     private final PlayerService playerService;
     private final TransactionService transactionService;
+//    private static Logger logger = LoggerFactory.getLogger(SLF4JExample.class);
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(CasinoController.class);
+
 
     @Autowired
     public CasinoController(PlayerService playerService, TransactionService transactionService) {
@@ -40,12 +43,16 @@ public class CasinoController {
     @ResponseBody
     public PlayerDTO createPlayer(@RequestParam("firstname") String firstName, @RequestParam("lastname") String lastName,
                                   @RequestParam("username") String username, @RequestParam("email") String email) {
-            return toPlayerDTO(playerService.createPlayer(firstName, lastName, username, email, 0.0));
+
+        log.debug("Creating player with firstname: " + firstName + " lastname: " + lastName + " email: " + email);
+        return toPlayerDTO(playerService.createPlayer(firstName, lastName, username, email, 0.0));
     }
 
     @GetMapping("/getallplayers")
     @ResponseBody
     public List<PlayerDTO> getAllPlayers() {
+
+        log.debug("Getting all players");
         return playerService.getAllPlayers()
                 .stream()
                 .map(PlayerDTO::toPlayerDTO)
@@ -59,6 +66,7 @@ public class CasinoController {
 
         checkPlayerExists(player);
 
+        log.debug("Getting player with PlayerId: " + playerId);
         return toPlayerDTO(playerService.getByPlayerId(playerId));
     }
 
@@ -74,6 +82,7 @@ public class CasinoController {
     @GetMapping("/getcurrentbalance")
     @ResponseBody
     public Double getCurrentBalance(@RequestParam UUID playerId) {
+        log.debug("Get current balance for customer with playerId: " + playerId);
         return playerService.getByPlayerId(playerId).getCurrentBalance();
     }
 
@@ -91,6 +100,7 @@ public class CasinoController {
         player.wager(wagerAmount);
         transactionService.createTransaction(playerId, GameEventTransaction.WAGER_TRANSACTION_TYPE, wagerAmount);
 
+        log.debug("Deducting wager for player with playerId: " + playerId + " wager amount: " + wagerAmount);
         return toPlayerDTO(playerService.updatePlayer(player));
     }
 
@@ -102,12 +112,16 @@ public class CasinoController {
 
         player.addWinnings(winningsAmount);
         transactionService.createTransaction(playerId, GameEventTransaction.WINNINGS_TRANSACTION_TYPE, winningsAmount);
+
+        log.debug("Adding winnings for player with PlayerId: " + playerId + " winnings amount: " + winningsAmount );
         return toPlayerDTO(playerService.updatePlayer(player));
     }
 
     @GetMapping("/latesttransactions")
     @ResponseBody
     public List<GameEventTransactionDTO> latestTransactions(@RequestParam String username, @RequestParam String password) {
+
+        log.debug("Getting latest transactions for player with username: " + username);
 
         if(!password.equals(PASSWORD_ANSWER)) {
             throw new ResponseStatusException(
