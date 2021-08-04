@@ -15,8 +15,21 @@ public class FreeWagersPromotion implements Promotion {
     private UUID playerId;
     private String promotionCode;
     private Integer numberOfFreeWagersRemaining;
-    public static Integer FREE_WAGER_PROMOTION_START_AMOUNT = 1;
+    public static Integer FREE_WAGER_PROMOTION_START_AMOUNT = 5;
 
+    /**
+     * The FreeWagersPromotion will allow for a certain amount of free
+     * wager amounts
+     *
+     * It is a specific promotion type with it's own database table, this way it's
+     * a stand alone module each promotion is able to reference it's current state
+     * via the database entry
+     *
+     * Other promotions will have their own table to manage their state
+     *
+     * The FreeWagersPromotion tracks the amount of free wagers remaining in
+     * the numberOfFreeWagersRemaining field
+     */
     public FreeWagersPromotion() {}
 
     public FreeWagersPromotion(Player player, String promotionCode, int numberOfFreeWagersRemaining) {

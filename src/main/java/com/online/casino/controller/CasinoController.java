@@ -99,7 +99,6 @@ public class CasinoController {
                     HttpStatus.I_AM_A_TEAPOT);
         }
 
-        //we assume the parameters are going to be a player and an amount for any type of promotion
         Double wagerAmountWithPromotion = promotionManagerService.processPromotion(player, wagerAmount, promotionCode);
 
         player.wager(wagerAmountWithPromotion);
