@@ -3,7 +3,7 @@ package com.online.casino.model.promotion;
 import com.online.casino.model.Player;
 
 /**
- * The DummyPromotion will only return the original amount in its processGameEvent method.
+ * The DummyPromotion will return the original amount in its processGameEvent method.
  * It won't alter the amount coming in and it will prevent null pointer exceptions if used where
  * an implemented Promotion object can't be created
  */
