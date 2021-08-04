@@ -89,23 +89,17 @@ public class CasinoController {
     }
 
     @PostMapping("/deductwager")
-    public PlayerDTO deductWager(@RequestParam UUID playerId,  @RequestParam Double wagerAmount, @RequestParam String promotionCode) {
-        Player player = playerService.getByPlayerId(playerId);
+    public PlayerDTO deductWager(@RequestParam UUID playerId,  @RequestParam Double wagerAmount) {
 
-        checkPlayerExists(player);
+        //sending a "none" promotion code will cause no promotion to be applied
+        return deductPlayerWager(playerId, wagerAmount, "none");
 
-        if(player.getCurrentBalance() <= 0.0 && wagerAmount > 0.0) {
-            throw new ResponseStatusException(
-                    HttpStatus.I_AM_A_TEAPOT);
-        }
+    }
 
-        Double wagerAmountWithPromotion = promotionManagerService.processPromotion(player, wagerAmount, promotionCode);
+    @PostMapping("/deductwagerwithpromotioncode")
+    public PlayerDTO deductWagerWithPromotionCode(@RequestParam UUID playerId,  @RequestParam Double wagerAmount, @RequestParam String promotionCode) {
 
-        player.wager(wagerAmountWithPromotion);
-        transactionService.createTransaction(playerId, GameEventTransaction.WAGER_TRANSACTION_TYPE, wagerAmountWithPromotion);
-
-        log.debug("Deducting wager for player with playerId: " + playerId + " wager amount: " + wagerAmountWithPromotion);
-        return toPlayerDTO(playerService.updatePlayer(player));
+        return deductPlayerWager(playerId, wagerAmount, promotionCode);
     }
 
     @PostMapping("/addwinnings")
@@ -153,6 +147,25 @@ public class CasinoController {
                 .stream()
                 .map(GameEventTransactionDTO::toGameRoundTransactionDTO)
                 .collect(Collectors.toList());
+    }
+
+    private PlayerDTO deductPlayerWager(UUID playerId, Double wagerAmount, String promotionCode) {
+        Player player = playerService.getByPlayerId(playerId);
+
+        checkPlayerExists(player);
+
+        Double wagerAmountWithPromotion = promotionManagerService.processPromotion(player, wagerAmount, promotionCode);
+
+        if(player.getCurrentBalance() <= 0.0 && wagerAmountWithPromotion > 0.0) {
+            throw new ResponseStatusException(
+                    HttpStatus.I_AM_A_TEAPOT);
+        }
+
+        player.wager(wagerAmountWithPromotion);
+        transactionService.createTransaction(playerId, GameEventTransaction.WAGER_TRANSACTION_TYPE, wagerAmountWithPromotion);
+
+        log.debug("Deducting wager for player with playerId: " + playerId + " wager amount: " + wagerAmountWithPromotion);
+        return toPlayerDTO(playerService.updatePlayer(player));
     }
 
     private void checkPlayerExists(Player player) {

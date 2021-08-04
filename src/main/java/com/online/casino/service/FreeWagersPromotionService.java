@@ -24,7 +24,11 @@ public class FreeWagersPromotionService {
 
     public Promotion updateFreeWagersPromotion(FreeWagersPromotion freeWagersPromotion) {
         //Player player, String promotionCode, Integer freeWagersAmount
-        return freeWagersPromotionRepository. save(freeWagersPromotion);
+        return freeWagersPromotionRepository.save(freeWagersPromotion);
+    }
+
+    public void deleteFreeWagersPromotion(FreeWagersPromotion freeWagersPromotion) {
+        freeWagersPromotionRepository.delete(freeWagersPromotion);
     }
 
     public Promotion findByPlayerAndPromotionCode(Player player, String promotionCode) {
