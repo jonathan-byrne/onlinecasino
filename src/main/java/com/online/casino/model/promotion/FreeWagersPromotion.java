@@ -1,4 +1,4 @@
-package com.online.casino.model.promotions;
+package com.online.casino.model.promotion;
 
 import com.online.casino.model.Player;
 
@@ -14,8 +14,8 @@ public class FreeWagersPromotion implements Promotion {
     private UUID promotionId;
     private UUID playerId;
     private String promotionCode;
-    private int numberOfFreeWagersRemaining;
-    public static Integer FREE_WAGER_PROMOTION_START_AMOUNT = 5;
+    private Integer numberOfFreeWagersRemaining;
+    public static Integer FREE_WAGER_PROMOTION_START_AMOUNT = 1;
 
     public FreeWagersPromotion() {}
 
@@ -33,8 +33,6 @@ public class FreeWagersPromotion implements Promotion {
             wagerAmount = 0.0;
         }
 
-        //TODO update promotion db entry
-
         return wagerAmount;
     }
 
@@ -50,7 +48,7 @@ public class FreeWagersPromotion implements Promotion {
         return promotionCode;
     }
 
-    public int getNumberOfFreeWagersRemaining() {
+    public Integer getNumberOfFreeWagersRemaining() {
         return numberOfFreeWagersRemaining;
     }
 }

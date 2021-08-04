@@ -1,6 +1,6 @@
 package com.online.casino.repository;
 
-import com.online.casino.model.promotions.FreeWagersPromotion;
+import com.online.casino.model.promotion.FreeWagersPromotion;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.UUID;

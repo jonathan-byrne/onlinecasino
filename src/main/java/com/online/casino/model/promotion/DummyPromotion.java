@@ -1,4 +1,4 @@
-package com.online.casino.model.promotions;
+package com.online.casino.model.promotion;
 
 import com.online.casino.model.Player;
 

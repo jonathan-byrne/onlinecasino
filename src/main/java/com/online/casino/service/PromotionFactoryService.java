@@ -1,7 +1,10 @@
-package com.online.casino.model.promotions;
+package com.online.casino.service;
 
 import com.online.casino.model.Player;
-import com.online.casino.service.FreeWagersPromotionService;
+import com.online.casino.model.promotion.DummyPromotion;
+import com.online.casino.model.promotion.FreeWagersPromotion;
+import com.online.casino.model.promotion.Promotion;
+import com.online.casino.util.PromotionCodes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,13 +22,13 @@ public class PromotionFactoryService {
         Promotion promotion;
 
         //checking the promotion code like this will protect us against null pointer exceptions
-        if("paper".equalsIgnoreCase(promotionCode)) {
+        if(PromotionCodes.FREE_WAGERS_PROMOTION_CODE.equalsIgnoreCase(promotionCode)) {
             promotion = freeWagersPromotionService.findByPlayerAndPromotionCode(player, promotionCode);
 
             //if a dummy promotion is returned then create a new promotion, we are avoiding branching on nulls to check whether the promotion
             //exists or not
             if(DummyPromotion.PROMOTION_CODE.equalsIgnoreCase(promotion.getPromotionCode())){
-                promotion = freeWagersPromotionService.createOrUpdateFreeWagersPromotion(player, promotionCode, FreeWagersPromotion.FREE_WAGER_PROMOTION_START_AMOUNT);
+                promotion = freeWagersPromotionService.createFreeWagersPromotion(player, promotionCode, FreeWagersPromotion.FREE_WAGER_PROMOTION_START_AMOUNT);
             }
         } else {
             promotion = new DummyPromotion();

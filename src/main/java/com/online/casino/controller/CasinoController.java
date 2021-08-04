@@ -4,9 +4,8 @@ import com.online.casino.dto.GameEventTransactionDTO;
 import com.online.casino.dto.PlayerDTO;
 import com.online.casino.model.GameEventTransaction;
 import com.online.casino.model.Player;
-import com.online.casino.model.promotions.Promotion;
-import com.online.casino.model.promotions.PromotionFactoryService;
 import com.online.casino.service.PlayerService;
+import com.online.casino.service.PromotionManagerService;
 import com.online.casino.service.TransactionService;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,13 +27,13 @@ public class CasinoController {
     private final PlayerService playerService;
     private final TransactionService transactionService;
     private static final Logger log = org.slf4j.LoggerFactory.getLogger(CasinoController.class);
-    private final PromotionFactoryService promotionFactoryService;
+    private final PromotionManagerService promotionManagerService;
 
     @Autowired
-    public CasinoController(PlayerService playerService, TransactionService transactionService, PromotionFactoryService promotionFactoryService) {
+    public CasinoController(PlayerService playerService, TransactionService transactionService, PromotionManagerService promotionManagerService) {
         this.playerService = playerService;
         this.transactionService = transactionService;
-        this.promotionFactoryService = promotionFactoryService;
+        this.promotionManagerService = promotionManagerService;
     }
 
     @GetMapping("/")
@@ -100,12 +99,8 @@ public class CasinoController {
                     HttpStatus.I_AM_A_TEAPOT);
         }
 
-        //for promotion code "paper" we will get a FreeWagerPromotion object to track and handle our free wagers
-        Promotion promotion = promotionFactoryService.getPromotion(player, promotionCode);
-
-        //we can assume the parameters are going to be a player and an amount for a promotion,
-        //we are either affecting the wager or addition events, both needing a player and amount
-        Double wagerAmountWithPromotion = promotion.processGameEvent(player, wagerAmount);
+        //we assume the parameters are going to be a player and an amount for any type of promotion
+        Double wagerAmountWithPromotion = promotionManagerService.processPromotion(player, wagerAmount, promotionCode);
 
         player.wager(wagerAmountWithPromotion);
         transactionService.createTransaction(playerId, GameEventTransaction.WAGER_TRANSACTION_TYPE, wagerAmountWithPromotion);
