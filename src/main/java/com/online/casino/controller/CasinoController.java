@@ -92,14 +92,14 @@ public class CasinoController {
     public PlayerDTO deductWager(@RequestParam UUID playerId,  @RequestParam Double wagerAmount) {
 
         //sending a "none" promotion code will cause no promotion to be applied
-        return deductPlayerWager(playerId, wagerAmount, "none");
+        return deductPlayerWager(playerId, wagerAmount, "paper", false);
 
     }
 
     @PostMapping("/deductwagerwithpromotioncode")
     public PlayerDTO deductWagerWithPromotionCode(@RequestParam UUID playerId,  @RequestParam Double wagerAmount, @RequestParam String promotionCode) {
 
-        return deductPlayerWager(playerId, wagerAmount, promotionCode);
+        return deductPlayerWager(playerId, wagerAmount, promotionCode, true);
     }
 
     @PostMapping("/addwinnings")
@@ -149,12 +149,12 @@ public class CasinoController {
                 .collect(Collectors.toList());
     }
 
-    private PlayerDTO deductPlayerWager(UUID playerId, Double wagerAmount, String promotionCode) {
+    private PlayerDTO deductPlayerWager(UUID playerId, Double wagerAmount, String promotionCode, Boolean createNewPromotion) {
         Player player = playerService.getByPlayerId(playerId);
 
         checkPlayerExists(player);
 
-        Double wagerAmountWithPromotion = promotionManagerService.processPromotion(player, wagerAmount, promotionCode);
+        Double wagerAmountWithPromotion = promotionManagerService.processPromotion(player, wagerAmount, promotionCode, createNewPromotion);
 
         if(player.getCurrentBalance() <= 0.0 && wagerAmountWithPromotion > 0.0) {
             throw new ResponseStatusException(

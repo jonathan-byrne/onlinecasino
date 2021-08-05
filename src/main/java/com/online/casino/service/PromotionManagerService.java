@@ -30,9 +30,9 @@ public class PromotionManagerService {
         this.freeWagersPromotionService = freeWagersPromotionService;
     }
 
-    public Double processPromotion(Player player, Double amount, String promotionCode) {
+    public Double processPromotion(Player player, Double amount, String promotionCode, Boolean createNewPromotion) {
 
-        Promotion promotion = promotionFactoryService.getPromotion(player, promotionCode);
+        Promotion promotion = promotionFactoryService.getPromotion(player, promotionCode, createNewPromotion);
 
         //if there isn't a promotion with this player and promotion code we will get a dummy promotion
         //we can process the game event without worrying that we could get a null pointer exception
