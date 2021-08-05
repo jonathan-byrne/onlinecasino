@@ -85,6 +85,7 @@ public class CasinoController {
     @GetMapping("/getcurrentbalance")
     @ResponseBody
     public Double getCurrentBalance(@RequestParam UUID playerId) {
+        checkPlayerExists(playerService.getByPlayerId(playerId));
         log.debug("Get current balance for customer with playerId: " + playerId);
         return playerService.getByPlayerId(playerId).getCurrentBalance();
     }
