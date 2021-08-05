@@ -7,6 +7,7 @@ import com.online.casino.model.Player;
 import com.online.casino.service.PlayerService;
 import com.online.casino.service.PromotionManagerService;
 import com.online.casino.service.TransactionService;
+import com.online.casino.util.PromotionCodes;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -91,8 +92,8 @@ public class CasinoController {
     @PostMapping("/deductwager")
     public PlayerDTO deductWager(@RequestParam UUID playerId,  @RequestParam Double wagerAmount) {
 
-        //sending a "none" promotion code will cause no promotion to be applied
-        return deductPlayerWager(playerId, wagerAmount, "paper", false);
+        //explicitly sending in the "paper" promotion code to apply the promotion if the current player has one
+        return deductPlayerWager(playerId, wagerAmount, PromotionCodes.FREE_WAGERS_PROMOTION_CODE, false);
 
     }
 

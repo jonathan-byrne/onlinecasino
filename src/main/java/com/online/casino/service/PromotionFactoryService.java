@@ -27,9 +27,11 @@ public class PromotionFactoryService {
 
             //if a dummy promotion is returned then create a new promotion, we are avoiding branching on nulls to check whether the promotion
             //exists or not
-            if((DummyPromotion.PROMOTION_CODE.equalsIgnoreCase(promotion.getPromotionCode())) && createNewPromotion) {
-                promotion = createFreeWagersPromotion(player, promotionCode);
-
+            if((DummyPromotion.PROMOTION_CODE.equalsIgnoreCase(promotion.getPromotionCode()))) {
+                if(createNewPromotion) {
+                    promotion = createFreeWagersPromotion(player, promotionCode);
+                }
+                
             //if current promotion is exhausted then create a new one
             } else if((((FreeWagersPromotion)promotion).getNumberOfFreeWagersRemaining() <= 0) && createNewPromotion) {
                 //delete old promotion
